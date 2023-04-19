@@ -26,60 +26,62 @@ class _ImagePickState extends State<ImagePick> {
               const SizedBox(
                 height: 20,
               ),
-              ElevatedButton.icon(
-                  style: const ButtonStyle(
-                    backgroundColor: MaterialStatePropertyAll(Colors.cyan),
-                  ),
-                  icon: const Icon(Icons.photo),
-                  label: const Text("Gallery Image",
-                      style: TextStyle(
-                        // color: Colors.white70,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 20,
-                      )),
-                  onPressed: () async {
-                    final imageTemp = await _viewModel.onUserPickImageGallery();
-                    setState(() {
-                      image = imageTemp;
-                      //print(image);
-                    });
-                  }),
-              ElevatedButton.icon(
-                  style: const ButtonStyle(
-                    backgroundColor:
-                        MaterialStatePropertyAll(Colors.lightBlueAccent),
-                  ),
-                  icon: const Icon(Icons.camera_alt),
-                  label: const Text("Camera Image",
-                      style: TextStyle(
-                        // color: Colors.white70,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 20,
-                      )),
-                  onPressed: () async {
-                    final imageTemp = await _viewModel.onUserPickImageCamera();
-                    setState(() {
-                      image = imageTemp;
-                      //print(image);
-                    });
-                  }),
+              galleryButton(),
+              cameraButton(),
               const Divider(
                 indent: 50,
                 endIndent: 50,
                 thickness: 3,
                 height: 80,
               ),
-              Container(
-                constraints: const BoxConstraints(
-                    maxHeight: 600,
-                    maxWidth:
-                        400), // Set max width height for image to prevent overflow
-                child: image != null
-                    ? Image.file(image!)
-                    : const Text("No image selected"),
-              ),
+              imageShow(),
             ],
           ),
         ));
+  }
+
+  Expanded imageShow() {
+    return Expanded(
+      child:
+          image != null ? Image.file(image!) : const Text("No image selected"),
+    );
+  }
+
+  ElevatedButton cameraButton() {
+    return ElevatedButton.icon(
+        style: const ButtonStyle(
+          backgroundColor: MaterialStatePropertyAll(Colors.lightBlueAccent),
+        ),
+        icon: const Icon(Icons.camera_alt),
+        label: const Text("Camera Image",
+            style: TextStyle(
+              fontWeight: FontWeight.bold,
+              fontSize: 20,
+            )),
+        onPressed: () async {
+          String? imageTemp = await _viewModel.onUserPickImageCamera();
+          setState(() {
+            image = File(imageTemp!);
+          });
+        });
+  }
+
+  ElevatedButton galleryButton() {
+    return ElevatedButton.icon(
+        style: const ButtonStyle(
+          backgroundColor: MaterialStatePropertyAll(Colors.cyan),
+        ),
+        icon: const Icon(Icons.photo),
+        label: const Text("Gallery Image",
+            style: TextStyle(
+              fontWeight: FontWeight.bold,
+              fontSize: 20,
+            )),
+        onPressed: () async {
+          String? imageTemp = await _viewModel.onUserPickImageGallery();
+          setState(() {
+            image = File(imageTemp!);
+          });
+        });
   }
 }
